@@ -16,10 +16,40 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {combineReducers, createStore, Reducer, Action} from 'redux';
+import {Provider} from 'react-redux';
+import * as Immutable from 'immutable';
 
-import { GloomyPage } from "./components/main";
+import {GloomyPage} from "./components/main";
+
+
+const initialState = Immutable.Record({
+    activePane: 'home',
+    ngramListData: Immutable.List<any>()
+});
+
+type AppState = Immutable.Record.Class;
+
+const fooReducer:Reducer<AppState> = <Action>(state:AppState, action:Action) => {
+    return state;
+}
+
+
+const store = createStore(fooReducer);
+
+
+console.log('store: ', store);
+
+
+
 
 ReactDOM.render(
-    React.createElement(GloomyPage, {version: '0.0.1'}),
+    React.createElement(
+        Provider,
+        {
+            store: store,
+            children: React.createElement(GloomyPage, {version: '0.0.1'})
+        }
+    ),
     document.getElementById('react-mount')
 );
