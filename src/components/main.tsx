@@ -14,20 +14,60 @@
  * limitations under the License.
  */
 
-import * as React from "react";
+import * as React from 'react';
+import {connect} from 'react-redux';
+import * as Immutable from 'immutable';
+import {Store, Dispatch} from 'redux';
+import {AppState} from '../main';
+import * as actions from '../actions';
+import {AppAction} from '../main';
+
+const mapStateToProps = (state:AppState, ownProps:GloomyPageProps) => {
+    console.log('1: ', state, '2: ', ownProps);
+    return {
+        activePane: state.get('activePane')
+    };
+}
+
+const mapDispatchToProps = (dispatch:Dispatch<any>, ownProps:GloomyPageProps) => {
+    return {
+        handleActionClick: () => dispatch({type: actions.MAIN_MENU_SWITCH_PANE, props: {}})
+    };
+}
+
+// ------------------
 
 
-export interface GloomyPageProps { version: string }
+export const ActionLink = (props:{actionId:string; label:string, onClick:()=>void}) => {
+    console.log('onclick: ', props.onClick);
+    return <a onClick={props.onClick}>{props.label}</a>;
+}
+
+// ------------------
+
+export interface GloomyPageProps {
+    version: string;
+    handleActionClick?:()=>void;
+
+}
 
 /**
  *
  * @param props
  */
-export const GloomyPage = (props: GloomyPageProps) => {
+export const GloomyPage = (props: GloomyPageProps, activePane:any) => {
+    console.log('props: ', props);
+
     return (
         <div>
             <h1>Gloomy web interface v. {props.version}</h1>
-
+            <ul>
+                <li>
+                    <ActionLink label="foo" actionId="bar" onClick={props.handleActionClick} />
+                </li>
+            </ul>
         </div>
     );
 };
+
+export const GloomyPageX = connect(mapStateToProps, mapDispatchToProps)(GloomyPage);

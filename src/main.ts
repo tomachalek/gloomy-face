@@ -16,26 +16,51 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {combineReducers, createStore, Reducer, Action} from 'redux';
+import {createStore, Reducer, Action} from 'redux';
 import {Provider} from 'react-redux';
 import * as Immutable from 'immutable';
+import {combineReducers} from 'redux-immutable';
+import * as actions from './actions';
 
-import {GloomyPage} from "./components/main";
+import {GloomyPageX} from "./components/main";
 
 
-const initialState = Immutable.Record({
-    activePane: 'home',
-    ngramListData: Immutable.List<any>()
-});
+export class AppState extends Immutable.Record(
+    {
+        activePane: 'home',
+        ngramListData: Immutable.List<any>()
+    }) {
 
-type AppState = Immutable.Record.Class;
+    activePane:string;
+    ngramListData:Immutable.List<any>
+}
 
-const fooReducer:Reducer<AppState> = <Action>(state:AppState, action:Action) => {
-    return state;
+export interface AppAction extends Action {
+    props:{[key:string]:any};
 }
 
 
-const store = createStore(fooReducer);
+const rootReducer = (state:AppState, action:AppAction) => {
+    return state;
+}
+
+const paneSwitchReducer:<A extends Action>(paneId:string, action: AppAction) => AppState = (paneId:string, action:AppAction) => {
+    switch (action.type) {
+        case actions.MAIN_MENU_SWITCH_PANE:
+            return action.props['paneId'];
+        default:
+            return paneId;
+    }
+}
+
+
+const store = createStore(
+    combineReducers({
+        rootReducer,
+        paneSwitchReducer
+    }),
+    new AppState()
+);
 
 
 console.log('store: ', store);
@@ -48,7 +73,7 @@ ReactDOM.render(
         Provider,
         {
             store: store,
-            children: React.createElement(GloomyPage, {version: '0.0.1'})
+            children: React.createElement(GloomyPageX, {version: '0.0.1'})
         }
     ),
     document.getElementById('react-mount')
