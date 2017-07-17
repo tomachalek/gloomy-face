@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-export const MAIN_MENU_SWITCH_PANE = 'MAIN_MENU_SWITCH_PANE';
+import * as Immutable from 'immutable';
 
-export const QUERY_FORM_SET_QUERY = 'QUERY_FORM_SET_QUERY';
-export const QUERY_FORM_SUBMIT = 'QUERY_FORM_SUBMIT';
+
+export interface QueryFormState {
+    query:string;
+}
+
+export class AppState extends Immutable.Record(
+    {
+        activePane: 'home',
+        query: {query: ''},
+        ngramList: Immutable.List<any>()
+    }) {
+
+    activePane:string;
+    query:QueryFormState;
+    ngramList:Immutable.List<any>;
+}

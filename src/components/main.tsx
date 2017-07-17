@@ -18,12 +18,12 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import * as Immutable from 'immutable';
 import {Store, Dispatch} from 'redux';
-import {AppState} from '../main';
+import {AppState} from '../state';
 import * as actions from '../actions';
 import {AppAction} from '../main';
+import {QueryForm} from './query';
 
 const mapStateToProps = (state:AppState, ownProps:GloomyPageProps) => {
-    console.log('1: ', state, '2: ', ownProps);
     return {
         activePane: state.get('activePane')
     };
@@ -31,15 +31,14 @@ const mapStateToProps = (state:AppState, ownProps:GloomyPageProps) => {
 
 const mapDispatchToProps = (dispatch:Dispatch<any>, ownProps:GloomyPageProps) => {
     return {
-        handleActionClick: () => dispatch({type: actions.MAIN_MENU_SWITCH_PANE, props: {}})
+        handleActionClick: () => dispatch({type: actions.MAIN_MENU_SWITCH_PANE, props: {paneId: 'home'}})
     };
 }
 
 // ------------------
 
 
-export const ActionLink = (props:{actionId:string; label:string, onClick:()=>void}) => {
-    console.log('onclick: ', props.onClick);
+export const ActionLink = (props:{paneId:string; label:string, onClick:()=>void}) => {
     return <a onClick={props.onClick}>{props.label}</a>;
 }
 
@@ -55,19 +54,22 @@ export interface GloomyPageProps {
  *
  * @param props
  */
-export const GloomyPage = (props: GloomyPageProps, activePane:any) => {
-    console.log('props: ', props);
+const GloomyPageInt = (props: GloomyPageProps, activePane:any) => {
 
     return (
         <div>
             <h1>Gloomy web interface v. {props.version}</h1>
             <ul>
                 <li>
-                    <ActionLink label="foo" actionId="bar" onClick={props.handleActionClick} />
+                    <ActionLink label="home" paneId="home" onClick={props.handleActionClick} />
+                </li>
+                <li>
+                    <ActionLink label="query" paneId="query" onClick={props.handleActionClick} />
                 </li>
             </ul>
+            <QueryForm />
         </div>
     );
 };
 
-export const GloomyPageX = connect(mapStateToProps, mapDispatchToProps)(GloomyPage);
+export const GloomyPage = connect(mapStateToProps, mapDispatchToProps)(GloomyPageInt);

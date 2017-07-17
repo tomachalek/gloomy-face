@@ -16,35 +16,31 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {createStore, Reducer, Action} from 'redux';
+import {createStore, Reducer, Action, ReducersMapObject} from 'redux';
 import {Provider} from 'react-redux';
 import * as Immutable from 'immutable';
 import {combineReducers} from 'redux-immutable';
 import * as actions from './actions';
+import * as state from './state';
 
-import {GloomyPageX} from "./components/main";
+import {GloomyPage} from "./components/main";
 
-
-export class AppState extends Immutable.Record(
-    {
-        activePane: 'home',
-        ngramListData: Immutable.List<any>()
-    }) {
-
-    activePane:string;
-    ngramListData:Immutable.List<any>
-}
 
 export interface AppAction extends Action {
     props:{[key:string]:any};
 }
 
 
-const rootReducer = (state:AppState, action:AppAction) => {
+const rootReducer:Reducer<state.AppState> = (state:state.AppState, action:AppAction) => {
     return state;
 }
 
-const paneSwitchReducer:<A extends Action>(paneId:string, action: AppAction) => AppState = (paneId:string, action:AppAction) => {
+const ngramList = (data:Immutable.List<any>, action:AppAction) => {
+    return data;
+}
+
+const activePane = (paneId:string, action:AppAction) => {
+    console.log('active pane: ', paneId, action);
     switch (action.type) {
         case actions.MAIN_MENU_SWITCH_PANE:
             return action.props['paneId'];
@@ -53,19 +49,13 @@ const paneSwitchReducer:<A extends Action>(paneId:string, action: AppAction) => 
     }
 }
 
-
 const store = createStore(
     combineReducers({
-        rootReducer,
-        paneSwitchReducer
+        activePane,
+        ngramList
     }),
-    new AppState()
+    new state.AppState()
 );
-
-
-console.log('store: ', store);
-
-
 
 
 ReactDOM.render(
@@ -73,7 +63,7 @@ ReactDOM.render(
         Provider,
         {
             store: store,
-            children: React.createElement(GloomyPageX, {version: '0.0.1'})
+            children: React.createElement(GloomyPage, {version: '0.0.1'})
         }
     ),
     document.getElementById('react-mount')
